@@ -30,7 +30,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                         print(f"Error loading module {file}, tried to set o when o was already set", file=sys.stderr)
                         cannot_load = True
                         break
-                    insert_at = 1
+                    insert_at = 0
                     overwrite_set = True
                     flag_overwrite = True
                     continue
