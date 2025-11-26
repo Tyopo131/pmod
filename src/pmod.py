@@ -44,10 +44,8 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                     priority = -1
                     break
             moddef = (moddef[remcount:]).strip("\n")
-            print(moddef)
             path = os.path.normpath(root + "/" + file)
             if (cannot_load): continue
-            print(f"root: {root}, path: {path}, overwrite: {flag_overwrite}, stderr: {flag_stderr}, manual: {flag_manual}, priority: {priority}")
             if (priority is None) or (insert_at is not None):
                 if (insert_at is None):
                     nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path})
@@ -59,20 +57,29 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 continue
             priority = int(moddef)
             modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "priority": priority})
-            print(f"root: {root}, path: {path}, overwrite: {flag_overwrite}, stderr: {flag_stderr}, manual: {flag_manual}, priority: {priority}")
-
-with open(os.path.normpath(home + "/.prompt/.list.sh"), "w") as f:
-    for mod in modules:
-        flags: str = ""
-        if (mod["overwrite"]): flags += "o"
-        if (mod["stderr"]): flags += "e"
-        if (mod["manual"]): flags += "m"
-        entry = flags + ";" + mod["path"] + "\n"
-        f.write(entry)
-    for mod in nosort_modules:
-        flags: str = ""
-        if (mod["overwrite"]): flags += "o"
-        if (mod["stderr"]): flags += "e"
-        if (mod["manual"]): flags += "m"
-        entry = flags + ";" + mod["path"] + "\n"
-        f.write(entry)
+modules.sort(key=lambda m: m["priority"])
+for mod in nosort_modules:
+    entry: str = ""
+    # Build script line
+    if (mod["manual"]):
+        entry = "source " + mod["path"]
+        print(entry)
+        continue
+    entry += f'export PS1="\\$(source {mod["path"]}'
+    if (mod["stderr"]): entry += " 2>&1"
+    entry += ')'
+    if (not mod["overwrite"]):
+        entry += "$PS1"
+    entry += '"'
+    print(entry)
+for mod in modules:
+    entry: str = ""
+    # Build script line
+    if (mod["manual"]):
+        entry = "source " + mod["path"]
+        print(entry)
+        continue
+    entry += f'export PS1="\\$(source {mod["path"]}'
+    if (mod["stderr"]): entry += " 2>&1"
+    entry += ')$PS1"'
+    print(entry)
