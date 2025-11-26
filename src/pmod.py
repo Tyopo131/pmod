@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Shebang to use for generated scripts
+SHEBANG: str = "#!/usr/bin/env bash"
 import os
 import sys
 home: str = os.getenv("HOME")
@@ -56,4 +58,21 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 print(f"Error loading module {path}, priority is not a number", file=sys.stderr)
                 continue
             priority = int(moddef)
+            modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "priority": priority})
             print(f"root: {root}, path: {path}, overwrite: {flag_overwrite}, stderr: {flag_stderr}, manual: {flag_manual}, priority: {priority}")
+
+with open(os.path.normpath(home + "/.prompt/.list.sh"), "w") as f:
+    for mod in modules:
+        flags: str = ""
+        if (mod["overwrite"]): flags += "o"
+        if (mod["stderr"]): flags += "e"
+        if (mod["manual"]): flags += "m"
+        entry = flags + ";" + mod["path"] + "\n"
+        f.write(entry)
+    for mod in nosort_modules:
+        flags: str = ""
+        if (mod["overwrite"]): flags += "o"
+        if (mod["stderr"]): flags += "e"
+        if (mod["manual"]): flags += "m"
+        entry = flags + ";" + mod["path"] + "\n"
+        f.write(entry)
