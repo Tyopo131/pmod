@@ -10,12 +10,14 @@ overwrite_module = None
 overwrite_module_2 = None
 overwrite_set = False
 overwrite_2_set = False
+silent = os.getenv("PMOD_LOG")
 for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
     for file in files:
         cannot_load = False
         with open(os.path.normpath(root + "/" + file), mode="r") as f:
             moddef: str = f.readline()
             if not (moddef.startswith("#?") or moddef.startswith("#>")):
+                if (silent not in ("loud")): continue
                 print(f"Error loading module {file}, does not start with valid signal", file=sys.stderr)
                 print("Is it a pmod module?", file=sys.stderr, end="\n\n")
                 continue
@@ -36,11 +38,11 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 insert_at: int = None
                 if char == "o":
                     if (PS == 1 and overwrite_set):
-                        print(f"Error loading module {file}, tried to set o for PS1 when o was already set for PS1", file=sys.stderr)
+                        if (silent in ("yes", "loud")): print(f"Error loading module {file}, tried to set o for PS1 when o was already set for PS1", file=sys.stderr)
                         cannot_load = True
                         break
                     if (PS == 2 and overwrite_2_set):
-                        print(f"Error loading module {file}, tried to set o for PS2 when o was already set for PS2", file=sys.stderr)
+                        if (silent in ("yes", "loud")): print(f"Error loading module {file}, tried to set o for PS2 when o was already set for PS2", file=sys.stderr)
                         cannot_load = True
                         break
                     insert_at = 0
@@ -60,6 +62,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             moddef = (moddef[remcount:]).strip("\n")
             path = os.path.normpath(root + "/" + file)
             if (cannot_load): continue
+            if (silent == "loud"): print(f"Loading {file} at {path}", file=sys.stderr)
             if (priority is None) or (insert_at is not None):
                 if (insert_at is None):
                     nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
@@ -105,7 +108,17 @@ if (overwrite_module_2 is not None):
             entry += f"$PS{overwrite_module_2["PS"]}"
         entry += '"'
         print(entry)
-
+for mod in modules:
+    entry: str = ""
+    # Build script line
+    if (mod["manual"]):
+        entry = "source " + mod["path"]
+        print(entry)
+        continue
+    entry += f'export PS{mod["PS"]}="\\$(source {mod["path"]}'
+    if (mod["stderr"]): entry += " 2>&1"
+    entry += f')$PS{mod["PS"]}"'
+    print(entry)
 for mod in nosort_modules:
     entry: str = ""
     # Build script line
@@ -119,15 +132,4 @@ for mod in nosort_modules:
     if (not mod["overwrite"]):
         entry += f"$PS{mod["PS"]}"
     entry += '"'
-    print(entry)
-for mod in modules:
-    entry: str = ""
-    # Build script line
-    if (mod["manual"]):
-        entry = "source " + mod["path"]
-        print(entry)
-        continue
-    entry += f'export PS{mod["PS"]}="\\$(source {mod["path"]}'
-    if (mod["stderr"]): entry += " 2>&1"
-    entry += f')$PS{mod["PS"]}"'
     print(entry)
