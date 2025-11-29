@@ -67,6 +67,9 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 if (overwrite_set):
                     overwrite_module = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
                     continue
+                if (overwrite_2_set):
+                    overwrite_module_2 = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
+                    continue
                 nosort_modules.insert(insert_at, {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
                 continue
             if not moddef.isalnum():
@@ -87,6 +90,19 @@ if (overwrite_module is not None):
         entry += ')'
         if (not overwrite_module["overwrite"]):
             entry += f"$PS{overwrite_module["PS"]}"
+        entry += '"'
+        print(entry)
+if (overwrite_module_2 is not None):
+    # Build script line
+    if (overwrite_module_2["manual"]):
+        entry = "source " + overwrite_module_2["path"]
+        print(entry)
+    else:
+        entry += f'export PS{overwrite_module_2["PS"]}="\\$(source {overwrite_module_2["path"]}'
+        if (overwrite_module_2["stderr"]): entry += " 2>&1"
+        entry += ')'
+        if (not overwrite_module_2["overwrite"]):
+            entry += f"$PS{overwrite_module_2["PS"]}"
         entry += '"'
         print(entry)
 
