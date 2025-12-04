@@ -12,6 +12,7 @@ overwrite_set = False
 overwrite_2_set = False
 silent = os.getenv("PMOD_LOG")
 for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
+    dirs[:] = [d for d in dirs if not d.startswith(".")]
     for file in files:
         cannot_load = False
         with open(os.path.normpath(root + "/" + file), mode="r") as f:
