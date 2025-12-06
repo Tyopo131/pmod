@@ -60,6 +60,10 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 elif char == " ":
                     priority = -1
                     break
+                elif char == "\n": continue
+                else:
+                    print(f"Non-fatal error loading module {file}, unknown flag {char}.", file=sys.stderr)
+                    continue
             moddef = (moddef[remcount:]).strip("\n")
             path = os.path.normpath(root + "/" + file)
             if (cannot_load): continue
