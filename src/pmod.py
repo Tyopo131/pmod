@@ -18,7 +18,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
         with open(os.path.normpath(root + "/" + file), mode="r") as f:
             moddef: str = f.readline()
             if not (moddef.startswith("#?") or moddef.startswith("#>")):
-                if (log_level not in ("loud")): continue
+                if (log_level != "all"): continue
                 print(f"Error loading module {file}, does not start with valid signal", file=sys.stderr)
                 print("Is it a pmod module?", file=sys.stderr, end="\n\n")
                 continue
@@ -40,11 +40,11 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 remcount += 1
                 if char == "o":
                     if (PS == 1 and overwrite_set):
-                        if (log_level in ("yes", "loud")): print(f"Error loading module {file}, tried to set o for PS1 when o was already set for PS1", file=sys.stderr)
+                        if (log_level in ("yes", "loud", "all")): print(f"Error loading module {file}, tried to set o for PS1 when o was already set for PS1", file=sys.stderr)
                         cannot_load = True
                         break
                     if (PS == 2 and overwrite_2_set):
-                        if (log_level in ("yes", "loud")): print(f"Error loading module {file}, tried to set o for PS2 when o was already set for PS2", file=sys.stderr)
+                        if (log_level in ("yes", "loud", "all")): print(f"Error loading module {file}, tried to set o for PS2 when o was already set for PS2", file=sys.stderr)
                         cannot_load = True
                         break
                     if PS == 1: overwrite_set = True
@@ -67,7 +67,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             moddef = (moddef[remcount:]).strip("\n")
             path = os.path.normpath(root + "/" + file)
             if (cannot_load): continue
-            if (log_level == "loud"): print(f"Loading {file} at {path}", file=sys.stderr)
+            if (log_level in ("loud", "all")): print(f"Loading {file} at {path}", file=sys.stderr)
             if (priority is None) or (insert_at is not None):
                 if (insert_at is None):
                     nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
