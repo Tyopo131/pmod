@@ -80,7 +80,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                     continue
                 nosort_modules.insert(insert_at, {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
                 continue
-            if not moddef.isalnum():
+            if not moddef.isdigit():
                 print(f"Error loading module {path}, priority is not a number", file=sys.stderr)
                 continue
             priority = int(moddef)
