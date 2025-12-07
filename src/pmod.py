@@ -8,8 +8,6 @@ modules = []
 nosort_modules = []
 overwrite_module = None
 overwrite_module_2 = None
-overwrite_set = False
-overwrite_2_set = False
 log_level = os.getenv("PMOD_LOG")
 for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
     dirs[:] = [d for d in dirs if not d.startswith(".")]
@@ -39,11 +37,11 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             for char in moddef:
                 remcount += 1
                 if char == "o":
-                    if (PS == 1 and overwrite_set):
+                    if (PS == 1 and overwrite_module is not None):
                         if (log_level in ("yes", "loud", "all")): print(f"Error loading module {file}, tried to set o for PS1 when o was already set for PS1", file=sys.stderr)
                         cannot_load = True
                         break
-                    if (PS == 2 and overwrite_2_set):
+                    if (PS == 2 and overwrite_module_2 is not None):
                         if (log_level in ("yes", "loud", "all")): print(f"Error loading module {file}, tried to set o for PS2 when o was already set for PS2", file=sys.stderr)
                         cannot_load = True
                         break
