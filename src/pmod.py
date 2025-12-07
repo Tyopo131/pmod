@@ -31,7 +31,6 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 PS = 1 # Will modify PS1
             priority: int = None
             remcount: int = 0
-            insert_at: int = None
             flag_manual = False
             flag_stderr = False
             flag_overwrite = False
@@ -68,17 +67,14 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             path = os.path.normpath(root + "/" + file)
             if (cannot_load): continue
             if (log_level in ("loud", "all")): print(f"Loading {file} at {path}", file=sys.stderr)
-            if (priority is None) or (insert_at is not None):
-                if (insert_at is None):
-                    nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
-                    continue
+            if (priority is None) or (flag_overwrite):
                 if (flag_overwrite and PS == 1):
                     overwrite_module = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
                     continue
                 if (flag_overwrite and PS == 2):
                     overwrite_module_2 = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
                     continue
-                nosort_modules.insert(insert_at, {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
+                nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
                 continue
             if not moddef.isdigit():
                 print(f"Error loading module {path}, priority is not a number", file=sys.stderr)
