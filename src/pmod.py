@@ -33,6 +33,7 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             flag_manual = False
             flag_stderr = False
             flag_overwrite = False
+            flag_dry_run = False
             insert_at: int = None
             for char in moddef:
                 remcount += 1
@@ -55,6 +56,8 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
                 elif char == "e":
                     flag_stderr = True
                     continue
+                elif char == "d":
+                    flag_dry_run = True
                 elif char == " ":
                     priority = -1
                     break
@@ -68,18 +71,18 @@ for root, dirs, files in os.walk(os.path.normpath(home + "/.prompt/mods/")):
             if (log_level in ("loud", "all")): print(f"Loading {file} at {path}", file=sys.stderr)
             if (priority is None) or (flag_overwrite):
                 if (flag_overwrite and PS == 1):
-                    overwrite_module = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
+                    overwrite_module = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS, "dry_run": flag_dry_run}
                     continue
                 if (flag_overwrite and PS == 2):
-                    overwrite_module_2 = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS}
+                    overwrite_module_2 = {"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS, "dry_run": flag_dry_run}
                     continue
-                nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS})
+                nosort_modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "PS": PS, "dry_run": flag_dry_run})
                 continue
             if not moddef.isdigit():
                 print(f"Error loading module {path}, priority is not a number", file=sys.stderr)
                 continue
             priority = int(moddef)
-            modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "priority": priority, "PS": PS})
+            modules.append({"manual": flag_manual, "stderr": flag_stderr, "overwrite": flag_overwrite, "path": path, "priority": priority, "PS": PS, "dry_run": flag_dry_run})
 modules.sort(key=lambda m: m["priority"])
 entry: str = ""
 if (overwrite_module is not None):
@@ -89,6 +92,8 @@ if (overwrite_module is not None):
         entry = "source " + overwrite_module["path"]
         print(entry)
     else:
+        if (overwrite_module["dry_run"]):
+            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{overwrite_module["path"]}\'\n'
         entry += f'export PS{overwrite_module["PS"]}="\\$(source {overwrite_module["path"]}'
         if (overwrite_module["stderr"]): entry += " 2>&1"
         entry += ')'
@@ -103,6 +108,8 @@ if (overwrite_module_2 is not None):
         entry = "source " + overwrite_module_2["path"]
         print(entry)
     else:
+        if (overwrite_module["dry_run"]):
+            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{overwrite_module["path"]}\'\n'
         entry += f'export PS{overwrite_module_2["PS"]}="\\$(source {overwrite_module_2["path"]}'
         if (overwrite_module_2["stderr"]): entry += " 2>&1"
         entry += ')'
@@ -117,6 +124,8 @@ for mod in modules:
         entry = "source " + mod["path"]
         print(entry)
         continue
+    if (mod["dry_run"]):
+        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{mod["path"]}\'\n'
     entry += f'export PS{mod["PS"]}="\\$(source {mod["path"]}'
     if (mod["stderr"]): entry += " 2>&1"
     entry += f')$PS{mod["PS"]}"'
@@ -128,6 +137,8 @@ for mod in nosort_modules:
         entry = "source " + mod["path"]
         print(entry)
         continue
+    if (mod["dry_run"]):
+        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{mod["path"]}\'\n'
     entry += f'export PS{mod["PS"]}="\\$(source {mod["path"]}'
     if (mod["stderr"]): entry += " 2>&1"
     entry += ')'
