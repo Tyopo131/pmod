@@ -89,12 +89,12 @@ if (overwrite_module is not None):
     entry: str = ""
     # Build script line
     if (overwrite_module["manual"]):
-        entry = f"source '{overwrite_module["path"]}'"
+        entry = f". '{overwrite_module["path"]}'"
         print(entry)
     else:
         if (overwrite_module["dry_run"]):
-            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{overwrite_module["path"]}\'\n'
-        entry += f'export PS{overwrite_module["PS"]}="\\$(source \'{overwrite_module["path"]}\''
+            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 . \'{overwrite_module["path"]}\'\n'
+        entry += f'export PS{overwrite_module["PS"]}="\\$(. \'{overwrite_module["path"]}\''
         if (overwrite_module["stderr"]): entry += " 2>&1"
         entry += ')'
         if (not overwrite_module["overwrite"]):
@@ -105,12 +105,12 @@ if (overwrite_module_2 is not None):
     entry: str = ""
     # Build script line
     if (overwrite_module_2["manual"]):
-        entry = f"source '{overwrite_module_2["path"]}'"
+        entry = f". '{overwrite_module_2["path"]}'"
         print(entry)
     else:
         if (overwrite_module["dry_run"]):
-            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{overwrite_module["path"]}\'\n'
-        entry += f'export PS{overwrite_module_2["PS"]}="\\$(source \'{overwrite_module_2["path"]}\''
+            entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 . \'{overwrite_module["path"]}\'\n'
+        entry += f'export PS{overwrite_module_2["PS"]}="\\$(. \'{overwrite_module_2["path"]}\''
         if (overwrite_module_2["stderr"]): entry += " 2>&1"
         entry += ')'
         if (not overwrite_module_2["overwrite"]):
@@ -121,12 +121,12 @@ for mod in modules:
     entry: str = ""
     # Build script line
     if (mod["manual"]):
-        entry = f"source '{mod["path"]}'"
+        entry = f". '{mod["path"]}'"
         print(entry)
         continue
     if (mod["dry_run"]):
-        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{mod["path"]}\'\n'
-    entry += f'export PS{mod["PS"]}="\\$(source \'{mod["path"]}\''
+        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 . \'{mod["path"]}\'\n'
+    entry += f'export PS{mod["PS"]}="\\$(. \'{mod["path"]}\''
     if (mod["stderr"]): entry += " 2>&1"
     entry += f')$PS{mod["PS"]}"'
     print(entry)
@@ -134,12 +134,12 @@ for mod in nosort_modules:
     entry: str = ""
     # Build script line
     if (mod["manual"]):
-        entry = "source " + mod["path"]
+        entry = ". " + mod["path"]
         print(entry)
         continue
     if (mod["dry_run"]):
-        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 source \'{mod["path"]}\'\n'
-    entry += f'export PS{mod["PS"]}="\\$(source \'{mod["path"]}\''
+        entry += f'PMOD_DRYRUN=1 PMOD_DRY_RUN=1 . \'{mod["path"]}\'\n'
+    entry += f'export PS{mod["PS"]}="\\$(. \'{mod["path"]}\''
     if (mod["stderr"]): entry += " 2>&1"
     entry += ')'
     if (not mod["overwrite"]):
