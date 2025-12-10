@@ -1,10 +1,10 @@
 # `pmod`
-`pmod` allows adding extensions to the bash prompt (or any shell that supports `source`).
+`pmod` allows adding extensions to the bash prompt (or any shell that supports `.`).
 ## Installing
 |Requirement|Version|
 |---|---|
 |Python|3.9|
-|A basic POSIX environment and shell|Any that supports `source` command|
+|A basic POSIX environment and shell|Any that supports the `.` command|
 
 1. Navigate into the `src` folder on GitHub, open pmod.py, and click the small download icon in the top right of the source view.
 2. Create the `~/.prompt/` and `~/.prompt/mods` directories
