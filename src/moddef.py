@@ -9,6 +9,7 @@ class ModDef:
 class ParseError(RuntimeError): # Custom exception class for mod definition parsing errors
     pass
 def parse(header: str) -> ModDef:
+    # PS parsing
     PS: int = None
     if (header.startswith(headers.PS1)):
         PS = 1
