@@ -1,4 +1,5 @@
 import headers
+import logger
 class ModDef: 
     def __init__(self, PS: int, flag_overwrite: bool = False, flag_dry_run: bool = False, flag_manual: bool = False, flag_stderr: bool = False):
         self.overwrite: bool = flag_overwrite
@@ -9,6 +10,7 @@ class ModDef:
 class ParseError(RuntimeError): # Custom exception class for mod definition parsing errors
     pass
 def parse(header: str) -> ModDef:
+    logger.debug(f"Parsing PS for string '{header}'")
     # PS parsing
     PS: int = None
     if (header.startswith(headers.PS1)):
@@ -18,5 +20,7 @@ def parse(header: str) -> ModDef:
         PS = 2
         header.removeprefix(headers.PS2)
     else:
+        logger.debug(f"Parsing PS for string {header} failed, raising exception")
         raise ParseError(f"Does not start with valid signal! ({headers.PS1} for PS1 or {headers.PS2} for PS2 supported)")
+    logger.debug(f"Parsing PS for string {header}: Determined PS is {PS}")
     
