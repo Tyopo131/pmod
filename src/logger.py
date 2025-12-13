@@ -18,6 +18,3 @@ def info(text):
 def debug(text):
     if log_level != "debug": return -1
     print(f"[DEBUG] {text}", file=stream)
-def shutdown():
-    if not stream.closed:
-        stream.close()
