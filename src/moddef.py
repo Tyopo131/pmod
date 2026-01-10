@@ -8,7 +8,12 @@ class ModDef:
         self.manual: bool = flag_manual
         self.prompt: int = PS
 class ParseError(RuntimeError): # Custom exception class for mod definition parsing errors
-    pass
+    def __init__(self, *args: object, header = None):
+        super().__init__(*args)
+        self.header = header
+    def __str__(self):
+        base = super().__str__()
+        return f"while parsing '{self.header}': {base}"
 def parse(header: str) -> ModDef:
     logger.debug(f"Parsing PS for string '{header}'")
     # PS parsing
